@@ -1,6 +1,7 @@
 ﻿using APICallSystem.API;
 using APICallSystem.BackEnd;
-using APICallSystem.Context;
+using APICallSystem.DataAdaptation;
+using APICallSystem.EntityContext;
 using CustomConsole;
 
 namespace MyApp
@@ -9,24 +10,30 @@ namespace MyApp
     {
         static void Main()
         {
-            Context context = new(UrlFactory.Create(true, "localhost", 7225, "api"));
+            JSONHttpReqResponseAdapter jsonResponseAdapter = new();
+            JSONHttpReqBodyAdapter jsonBodyAdapter = new();
 
-            context.AddEntity(new Entity<Message>("Module")); 
-            context.AddEntity(new Entity<User>("Test"));
+            Context context = new(UrlFactory.Create(true, "localhost", 7225, "api"), jsonResponseAdapter, jsonBodyAdapter);
 
-            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70a"), Act);
+            context.AddEntity(typeof(Message), "Module"); 
+            context.AddEntity(typeof(User), "Test");
+
+            var entity = context.Get<User>();
+            Console.WriteLine(entity?.ToString());
+
+            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, onFailure: OnFailure);
 
             Thread.Sleep(3000);
         }
 
-        private static void APICall_OnDataReceived(object? sender, APICall.OnRequestResponse e)
+        public async static Task OnSuccess<T>(T? t)
         {
-            CConsole.WriteLine(e.response.Content + " ye");
+            await CConsole.WriteLineAsync(t + " Success");
         }
 
-        public async static Task Act<T>(T? t)
+        public static void OnFailure(OnRequestSuccessEventArgs response)
         {
-            await CConsole.WriteLineAsync(t + " ye");
+            //await CConsole.WriteLineAsync("Failure");
         }
     }
 }

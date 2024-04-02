@@ -1,59 +1,58 @@
-﻿using CustomConsole;
+﻿using APICallSystem.DataAdaptation;
+using CustomConsole;
+using System.Linq.Expressions;
 
 namespace APICallSystem.API
 {
-    public class APICall
+    public class APICall<T>
     {
         private RequestType _requestType;
         private string _url;
-        public event EventHandler<OnRequestResponse>? OnAnswerReceived;
-        public event EventHandler<OnRequestResponse>? OnSuccess;
-        public event EventHandler<OnRequestResponse>? OnFailure;
-        public class OnRequestResponse : EventArgs
-        {
-            public required HttpResponseMessage response;
-        }
+        public event Action<OnRequestSuccessEventArgs<T>>? OnSuccess;
+        public event Action<OnRequestFailureEventArgs<T>>? OnFailure;
+        private IHttpReqResponseAdapter _responseAdapter;
+        private IHttpReqBodyAdapter? _bodyAdapter;
 
-        public APICall(RequestType type, string url, EventHandler<OnRequestResponse>? OnAnswerReceived = null,
-            EventHandler<OnRequestResponse>? OnSuccess = null, EventHandler<OnRequestResponse>? OnFailure = null)
+        public APICall(RequestType type, string url, IHttpReqResponseAdapter responseAdapter, IHttpReqBodyAdapter? bodyAdapter = null,
+            Action<OnRequestSuccessEventArgs<T>>? OnSuccess = null, Action<OnRequestFailureEventArgs<T>>? OnFailure = null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(url, nameof(url));
             _requestType = type;
             _url = url;
-            if (OnAnswerReceived != null) this.OnAnswerReceived += OnAnswerReceived;
             if (OnSuccess != null) this.OnSuccess += OnSuccess;
             if (OnFailure != null) this.OnFailure += OnFailure;
+            _responseAdapter = responseAdapter;
+            _bodyAdapter = bodyAdapter;
         }
 
-        public async Task<string> Execute() => _requestType switch
+        public async Task Execute()
         {
-            { } when _requestType == RequestType.Get => await Get(_url),
-            //{ } when _requestType == RequestType.Post => Get(_url),
-            _ => throw new ArgumentOutOfRangeException(nameof(_requestType), $"Unsupported request type: {_requestType}")
-        };
+            if (_requestType is RequestType.Get) await Get(_url);
+            //else if (_requestType is RequestType.Post) await Get(_url);
+            else throw new InvalidOperationException("Unsupported enum.");
+        }   
 
-        private async Task<string> Get(string url)
+        private async Task Get(string url)
         {
             using HttpClient client = new();
 
             try
             {
                 HttpResponseMessage response = await client.GetAsync(url);
-                OnAnswerReceived?.Invoke(typeof(APICall), new OnRequestResponse { response = response });
 
                 string responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    OnSuccess?.Invoke(typeof(APICall), new OnRequestResponse { response = response });
+                    T? entity = _responseAdapter.Convert<T>(responseContent);
+                    OnSuccess?.Invoke(new OnRequestSuccessEventArgs<T> { response = response, entity = entity });
                     CConsole.WriteSuccess(responseContent);
                 }
                 else
                 {
-                    OnFailure?.Invoke(typeof(APICall), new OnRequestResponse { response = response });
+                    OnFailure?.Invoke(new OnRequestFailureEventArgs<T> { response = response, errorData = responseContent });
                     CConsole.WriteError(responseContent);
                 }
-                return responseContent;
             }
             catch (HttpRequestException)
             {
