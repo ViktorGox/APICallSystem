@@ -5,13 +5,19 @@ namespace APICallSystem.API
 {
     public static class APICall
     {
+        public static event EventHandler<OnAnswerReceivedEventArgs>? OnAnswerReceived;
+        public class OnAnswerReceivedEventArgs : EventArgs
+        {
+            public required HttpResponseMessage response;
+        }
         public static async Task<string> Get(string url)
         {
-            using HttpClient client = new HttpClient();
+            using HttpClient client = new();
 
             try
             {
                 HttpResponseMessage response = await client.GetAsync(url);
+                OnAnswerReceived?.Invoke(typeof(APICall), new OnAnswerReceivedEventArgs { response = response});
 
                 if (response.IsSuccessStatusCode)
                 {

@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 
 namespace APICallSystem.Context
 {
-    internal class Entity<T> : IEntity<T> where T : class
+    internal class Entity<T>(string endPoint) : IEntity<T> where T : class
     {
-        private readonly string _endPoint;
+        private readonly string _endPoint = endPoint;
         private string? _mainUrl;
 
         public string EndPoint
@@ -27,12 +27,7 @@ namespace APICallSystem.Context
             }
         }
 
-        public Entity(string endPoint)
-        {
-            _endPoint = endPoint;
-        }
-
-        public void Get(Guid id, Func<T, Task> executable)
+        public void Get(Guid id, Func<T?, Task> executable)
         {
             Task.Run(async () =>
             {
