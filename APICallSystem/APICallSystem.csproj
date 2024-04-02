@@ -11,4 +11,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="CConsole">
+      <HintPath>..\..\CConsole\CConsole\bin\Debug\net8.0\CConsole.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

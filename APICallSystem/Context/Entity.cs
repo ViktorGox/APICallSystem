@@ -1,4 +1,5 @@
-﻿using APICallSystem.BackEnd;
+﻿using APICallSystem.API;
+using APICallSystem.BackEnd;
 using APICallSystem.Query;
 using Newtonsoft.Json;
 
@@ -6,11 +7,24 @@ namespace APICallSystem.Context
 {
     internal class Entity<T> : IEntity<T> where T : class
     {
-        private string _endPoint;
+        private readonly string _endPoint;
+        private string? _mainUrl;
 
         public string EndPoint
         {
             get { return _endPoint; }
+        }
+
+        public string MainUrl
+        {
+            set
+            {
+                if (_mainUrl is not null && _mainUrl != value)
+                {
+                    throw new InvalidOperationException("Invalid attempt to reassign the main url. Possibly reusing by accident.");
+                }
+                _mainUrl = value;
+            }
         }
 
         public Entity(string endPoint)
@@ -18,20 +32,19 @@ namespace APICallSystem.Context
             _endPoint = endPoint;
         }
 
-
-        public T Get(Guid id)
+        public void Get(Guid id, Func<T, Task> executable)
         {
-            string data = "{\r\n    \"Id\": 2,\r\n    \"Title\": \"a\",\r\n    \"Body\": \"sdfsd\"\r\n}";
-
-            // Deserialize JSON to object of type T
-            T result = JsonConvert.DeserializeObject<T>(data);
-
-            return result;
+            Task.Run(async () =>
+            {
+                string response = await APICall.Get(_mainUrl + _endPoint + "/" + id);
+                T? result = JsonConvert.DeserializeObject<T>(response);
+                await executable(result);
+            });
         }
 
-        public ICollection<T> Get(IQuery? query = null)
+        public void Get(IQuery? query = null)
         {
-            return [];
+            throw new NotImplementedException();
         }
 
         public void Post(T t)
