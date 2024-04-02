@@ -31,7 +31,8 @@ namespace APICallSystem.Context
         {
             Task.Run(async () =>
             {
-                string response = await APICall.Get(_mainUrl + _endPoint + "/" + id);
+                APICall apiCall = new(RequestType.Get, _mainUrl + _endPoint + "/" + id);
+                string response = await apiCall.Execute();
                 T? result = JsonConvert.DeserializeObject<T>(response);
                 await executable(result);
             });
