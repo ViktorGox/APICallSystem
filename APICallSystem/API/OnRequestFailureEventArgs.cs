@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace APICallSystem.API
+﻿namespace APICallSystem.API
 {
-    public class OnRequestFailureEventArgs<T> : EventArgs
+    public class OnRequestFailureEventArgs : EventArgs
     {
         public required string errorData;
         public required HttpResponseMessage response;

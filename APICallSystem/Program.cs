@@ -18,22 +18,19 @@ namespace MyApp
             context.AddEntity(typeof(Message), "Module"); 
             context.AddEntity(typeof(User), "Test");
 
-            var entity = context.Get<User>();
-            Console.WriteLine(entity?.ToString());
-
-            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, onFailure: OnFailure);
+            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70b"), OnSuccess, OnFailure);
 
             Thread.Sleep(3000);
         }
 
-        public async static Task OnSuccess<T>(T? t)
+        public static void OnSuccess<T>(OnRequestSuccessEventArgs<T> onRequestSuccessEventArgs)
         {
-            await CConsole.WriteLineAsync(t + " Success");
+            CConsole.WriteLine(onRequestSuccessEventArgs.entity + " Success");
         }
 
-        public static void OnFailure(OnRequestSuccessEventArgs response)
+        public static void OnFailure(OnRequestFailureEventArgs onRequestFailureEventArgs)
         {
-            //await CConsole.WriteLineAsync("Failure");
+            CConsole.WriteLine(onRequestFailureEventArgs.errorData + " Success");
         }
     }
 }

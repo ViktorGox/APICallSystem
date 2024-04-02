@@ -16,7 +16,7 @@ namespace APICallSystem.EntityContext
             get { return _endPoint; }
         }
 
-        public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs<T>>? onFailure = null)
+        public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null)
         {
             Task.Run(async () =>
             {

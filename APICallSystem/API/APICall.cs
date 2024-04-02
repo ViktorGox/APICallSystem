@@ -1,6 +1,5 @@
 ﻿using APICallSystem.DataAdaptation;
 using CustomConsole;
-using System.Linq.Expressions;
 
 namespace APICallSystem.API
 {
@@ -9,12 +8,12 @@ namespace APICallSystem.API
         private RequestType _requestType;
         private string _url;
         public event Action<OnRequestSuccessEventArgs<T>>? OnSuccess;
-        public event Action<OnRequestFailureEventArgs<T>>? OnFailure;
+        public event Action<OnRequestFailureEventArgs>? OnFailure;
         private IHttpReqResponseAdapter _responseAdapter;
         private IHttpReqBodyAdapter? _bodyAdapter;
 
         public APICall(RequestType type, string url, IHttpReqResponseAdapter responseAdapter, IHttpReqBodyAdapter? bodyAdapter = null,
-            Action<OnRequestSuccessEventArgs<T>>? OnSuccess = null, Action<OnRequestFailureEventArgs<T>>? OnFailure = null)
+            Action<OnRequestSuccessEventArgs<T>>? OnSuccess = null, Action<OnRequestFailureEventArgs>? OnFailure = null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(url, nameof(url));
             _requestType = type;
@@ -46,12 +45,10 @@ namespace APICallSystem.API
                 {
                     T? entity = _responseAdapter.Convert<T>(responseContent);
                     OnSuccess?.Invoke(new OnRequestSuccessEventArgs<T> { response = response, entity = entity });
-                    CConsole.WriteSuccess(responseContent);
                 }
                 else
                 {
-                    OnFailure?.Invoke(new OnRequestFailureEventArgs<T> { response = response, errorData = responseContent });
-                    CConsole.WriteError(responseContent);
+                    OnFailure?.Invoke(new OnRequestFailureEventArgs { response = response, errorData = responseContent });
                 }
             }
             catch (HttpRequestException)
