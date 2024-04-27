@@ -1,5 +1,5 @@
-﻿using APICallSystem.DataAdaptation;
-using CustomConsole;
+﻿using APICallSystem.API.EventArguments;
+using APICallSystem.DataAdaptation;
 
 namespace APICallSystem.API
 {
@@ -29,64 +29,25 @@ namespace APICallSystem.API
             if (_requestType is RequestType.Get) await Get(_url);
             //else if (_requestType is RequestType.Post) await Get(_url);
             else throw new InvalidOperationException("Unsupported enum.");
-        }   
+        }
 
         private async Task Get(string url)
         {
             using HttpClient client = new();
 
-            try
+            HttpResponseMessage response = await client.GetAsync(url);
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await client.GetAsync(url);
-
-                string responseContent = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    T? entity = _responseAdapter.Convert<T>(responseContent);
-                    OnSuccess?.Invoke(new OnRequestSuccessEventArgs<T> { response = response, entity = entity });
-                }
-                else
-                {
-                    OnFailure?.Invoke(new OnRequestFailureEventArgs { response = response, errorData = responseContent });
-                }
+                T? entity = _responseAdapter.Convert<T>(responseContent);
+                OnSuccess?.Invoke(new OnRequestSuccessEventArgs<T> { response = response, entity = entity });
             }
-            catch (HttpRequestException)
+            else
             {
-                throw;
+                OnFailure?.Invoke(new OnRequestFailureEventArgs { response = response, errorData = responseContent });
             }
         }
-
-
-
-        //public static async Task Method()
-        //{
-        //    using HttpClient client = new();
-        //    try
-        //    {
-        //        // Create a JSON string for the request body
-        //        string jsonBody = "{\"label\": \"value\"}";
-
-        //        // Create the HttpContent object with JSON content
-        //        HttpContent content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-
-        //        // Send the POST request with the specified body
-        //        HttpResponseMessage response = await client.PostAsync("https://localhost:7225/api/Module", content);
-        //        // Check if the response is successful
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            string responseBody = await response.Content.ReadAsStringAsync();
-        //            CConsole.WriteLine("Response: " + responseBody);
-        //        }
-        //        else
-        //        {
-        //            CConsole.WriteLine("Request failed with status code " + response.StatusCode);
-        //        }
-        //    }
-        //    catch (HttpRequestException e)
-        //    {
-        //        CConsole.WriteLine("Request failed: " + e.Message);
-        //    }
-        //}
     }
 }

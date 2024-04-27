@@ -1,4 +1,4 @@
-﻿namespace APICallSystem.API
+﻿namespace APICallSystem.API.EventArguments
 {
     public class OnRequestSuccessEventArgs<T> : EventArgs
     {

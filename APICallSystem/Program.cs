@@ -1,4 +1,5 @@
 ﻿using APICallSystem.API;
+using APICallSystem.API.EventArguments;
 using APICallSystem.BackEnd;
 using APICallSystem.DataAdaptation;
 using APICallSystem.EntityContext;
@@ -18,9 +19,9 @@ namespace MyApp
             context.AddEntity(typeof(Message), "Module"); 
             context.AddEntity(typeof(User), "Test");
 
-            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70b"), OnSuccess, OnFailure);
+            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure);
 
-            Thread.Sleep(3000);
+            Thread.Sleep(16000);
         }
 
         public static void OnSuccess<T>(OnRequestSuccessEventArgs<T> onRequestSuccessEventArgs)
