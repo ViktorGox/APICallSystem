@@ -20,7 +20,6 @@ namespace MyApp
             context.AddEntity(typeof(User), "Test");
 
             context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure);
-
             Thread.Sleep(16000);
         }
 

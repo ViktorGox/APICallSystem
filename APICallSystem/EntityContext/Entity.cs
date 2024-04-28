@@ -1,10 +1,12 @@
 ﻿using APICallSystem.API;
 using APICallSystem.API.EventArguments;
 using APICallSystem.DataAdaptation;
-using Newtonsoft.Json;
 
 namespace APICallSystem.EntityContext
 {
+    /// <summary>
+    /// Represents entity present in the back end, allows for calling available end points.
+    /// </summary>
     internal class Entity<T>(string endPoint, string baseUrl, IHttpReqResponseAdapter responseAdapter, IHttpReqBodyAdapter bodyAdapter)
     {
         private readonly string _endPoint = endPoint;

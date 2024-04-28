@@ -3,6 +3,9 @@ using System.Reflection;
 
 namespace APICallSystem.EntityContext
 {
+    /// <summary>
+    /// Represents list of entities which can be accessed through the API, each entity is represented by <see cref="Entity{T}"/> instance containing specific end points.
+    /// </summary>
     internal class Context(string baseUrl, IHttpReqResponseAdapter responseAdapter, IHttpReqBodyAdapter bodyAdapter)
     {
         internal protected readonly string _baseUrl = baseUrl;

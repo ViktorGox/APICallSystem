@@ -1,5 +1,8 @@
 ﻿namespace APICallSystem.BackEnd
 {
+    /// <summary>
+    /// Dummy class.
+    /// </summary>
     internal class User
     {
         public string Id { get; set; }
