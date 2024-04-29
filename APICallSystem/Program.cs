@@ -19,7 +19,10 @@ namespace MyApp
             context.AddEntity(typeof(Message), "Module"); 
             context.AddEntity(typeof(User), "Test");
 
-            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure);
+            User dummyUser = new User("112", "Obvious name", "@av");
+
+            //context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure);
+            context.Get<User>()?.Post(dummyUser, OnSuccess, OnFailure);
             Thread.Sleep(16000);
         }
 
@@ -30,7 +33,7 @@ namespace MyApp
 
         public static void OnFailure(OnRequestFailureEventArgs onRequestFailureEventArgs)
         {
-            CConsole.WriteLine(onRequestFailureEventArgs.errorData + " Success");
+            CConsole.WriteLine(onRequestFailureEventArgs.errorData + " Failure");
         }
     }
 }
