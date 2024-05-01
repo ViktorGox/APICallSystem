@@ -1,5 +1,4 @@
-﻿using APICallSystem.API;
-using APICallSystem.API.APICalls;
+﻿using APICallSystem.API.APICalls;
 using APICallSystem.API.EventArguments;
 using APICallSystem.DataAdaptation;
 
@@ -14,11 +13,6 @@ namespace APICallSystem.EntityContext
         private readonly string _baseUrl = baseUrl;
         private readonly IHttpReqResponseAdapter _responseAdapter = responseAdapter;
         private readonly IHttpReqBodyAdapter _bodyAdapter = bodyAdapter;
-
-        public string EndPoint
-        {
-            get { return _endPoint; }
-        }
 
         public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null)
         {
