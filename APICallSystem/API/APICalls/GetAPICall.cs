@@ -3,10 +3,10 @@ using APICallSystem.DataAdaptation;
 
 namespace APICallSystem.API.APICalls
 {
-    internal class GetAPICall<T> where T : class
+    internal class GetAPICall<T> : IAPICall where T : class
     {
-        private string _url;
-        private IHttpReqResponseAdapter _responseAdapter;
+        private readonly string _url;
+        private readonly IHttpReqResponseAdapter _responseAdapter;
         private event Action<OnRequestSuccessEventArgs<T>>? OnSuccess;
         private event Action<OnRequestFailureEventArgs>? OnFailure;
 
@@ -19,7 +19,12 @@ namespace APICallSystem.API.APICalls
             if (onFailure != null) OnFailure += onFailure;
         }
 
-        public async Task Execute()
+        public void Execute()
+        {
+            ExecuteAsync().Wait();
+        }
+
+        private async Task ExecuteAsync()
         {
             using HttpClient client = new();
 
