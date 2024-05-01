@@ -16,20 +16,32 @@ namespace APICallSystem.EntityContext
 
         public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null)
         {
-            Task.Run(async () =>
-            {
-                GetAPICall<T> getApiCall = new(_baseUrl + _endPoint + "/" + id, _responseAdapter, onSuccess, onFailure);
-                await getApiCall.Execute();
-            });
+            GetAPICall<T> getApiCall = new(_baseUrl + _endPoint + "/" + id, _responseAdapter, onSuccess, onFailure);
+            Prepare(getApiCall);
         }
 
         public void Post(T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null) 
         {
-            Task.Run(async () =>
+            PostAPICall<T> postApiCall = new(_baseUrl + _endPoint, _responseAdapter, _bodyAdapter, body, onSuccess, onFailure);
+            Prepare(postApiCall);
+        }
+
+        private void Prepare(IAPICall call)
+        {
+            Thread thread = new(() => Entity<T>.ExecuteCall(call));
+            thread.Start();
+        }
+
+        private static void ExecuteCall(IAPICall call)
+        {
+            try
             {
-                PostAPICall<T> postApiCall = new(_baseUrl + _endPoint, _responseAdapter, _bodyAdapter, body, onSuccess, onFailure);
-                await postApiCall.Execute();
-            });
+                call.Execute();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
         }
     }
 }
