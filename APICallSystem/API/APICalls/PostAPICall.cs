@@ -1,6 +1,5 @@
 ﻿using APICallSystem.API.EventArguments;
 using APICallSystem.DataAdaptation;
-using System.Threading;
 
 namespace APICallSystem.API.APICalls
 {
