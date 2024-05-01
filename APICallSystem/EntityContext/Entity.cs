@@ -14,25 +14,25 @@ namespace APICallSystem.EntityContext
         private readonly IHttpReqResponseAdapter _responseAdapter = responseAdapter;
         private readonly IHttpReqBodyAdapter _bodyAdapter = bodyAdapter;
 
-        public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null)
+        public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null)
         {
             GetAPICall<T> getApiCall = new(_baseUrl + _endPoint + "/" + id, _responseAdapter, onSuccess, onFailure);
-            Prepare(getApiCall);
+            Prepare(getApiCall, onError);
         }
 
-        public void Post(T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null) 
+        public void Post(T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null) 
         {
             PostAPICall<T> postApiCall = new(_baseUrl + _endPoint, _responseAdapter, _bodyAdapter, body, onSuccess, onFailure);
-            Prepare(postApiCall);
+            Prepare(postApiCall, onError);
         }
 
-        private void Prepare(IAPICall call)
+        private void Prepare(IAPICall call, Action<OnReqExecutionFailureEventArgs>? onError = null)
         {
-            Thread thread = new(() => Entity<T>.ExecuteCall(call));
+            Thread thread = new(() => Entity<T>.ExecuteCall(call, onError));
             thread.Start();
         }
 
-        private static void ExecuteCall(IAPICall call)
+        private static void ExecuteCall(IAPICall call, Action<OnReqExecutionFailureEventArgs>? onError = null)
         {
             try
             {
@@ -40,7 +40,8 @@ namespace APICallSystem.EntityContext
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                if (onError == null) return;
+                onError(new OnReqExecutionFailureEventArgs() { reason = ex });
             }
         }
     }
