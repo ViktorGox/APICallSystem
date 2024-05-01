@@ -19,11 +19,10 @@ namespace MyApp
             context.AddEntity(typeof(Message), "Module"); 
             context.AddEntity(typeof(User), "Test");
 
-            User dummyUser = new User("112", "Obvious name", "@av");
+            User dummyUser = new("112", "Obvious name", "@av");
 
-            //context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure);
+            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure, OnError);
             context.Get<User>()?.Post(dummyUser, OnSuccess, OnFailure);
-            Thread.Sleep(16000);
         }
 
         public static void OnSuccess<T>(OnRequestSuccessEventArgs<T> onRequestSuccessEventArgs)
@@ -34,6 +33,11 @@ namespace MyApp
         public static void OnFailure(OnRequestFailureEventArgs onRequestFailureEventArgs)
         {
             CConsole.WriteLine(onRequestFailureEventArgs.errorData + " Failure");
+        }
+
+        public static void OnError(OnReqExecutionFailureEventArgs onReqExecutionFailureEventArgs)
+        {
+            throw onReqExecutionFailureEventArgs.reason;
         }
     }
 }

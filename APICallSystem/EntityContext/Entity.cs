@@ -1,5 +1,4 @@
-﻿using APICallSystem.API;
-using APICallSystem.API.APICalls;
+﻿using APICallSystem.API.APICalls;
 using APICallSystem.API.EventArguments;
 using APICallSystem.DataAdaptation;
 
@@ -15,27 +14,35 @@ namespace APICallSystem.EntityContext
         private readonly IHttpReqResponseAdapter _responseAdapter = responseAdapter;
         private readonly IHttpReqBodyAdapter _bodyAdapter = bodyAdapter;
 
-        public string EndPoint
+        public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null)
         {
-            get { return _endPoint; }
+            GetAPICall<T> getApiCall = new(_baseUrl + _endPoint + "/" + id, _responseAdapter, onSuccess, onFailure);
+            Prepare(getApiCall, onError);
         }
 
-        public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null)
+        public void Post(T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null) 
         {
-            Task.Run(async () =>
-            {
-                GetAPICall<T> getApiCall = new(_baseUrl + _endPoint + "/" + id, _responseAdapter, onSuccess, onFailure);
-                await getApiCall.Execute();
-            });
+            PostAPICall<T> postApiCall = new(_baseUrl + _endPoint, _responseAdapter, _bodyAdapter, body, onSuccess, onFailure);
+            Prepare(postApiCall, onError);
         }
 
-        public void Post(T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null) 
+        private void Prepare(IAPICall call, Action<OnReqExecutionFailureEventArgs>? onError = null)
         {
-            Task.Run(async () =>
+            Thread thread = new(() => Entity<T>.ExecuteCall(call, onError));
+            thread.Start();
+        }
+
+        private static void ExecuteCall(IAPICall call, Action<OnReqExecutionFailureEventArgs>? onError = null)
+        {
+            try
             {
-                PostAPICall<T> postApiCall = new(_baseUrl + _endPoint, _responseAdapter, _bodyAdapter, body, onSuccess, onFailure);
-                await postApiCall.Execute();
-            });
+                call.Execute();
+            }
+            catch (Exception ex)
+            {
+                if (onError == null) return;
+                onError(new OnReqExecutionFailureEventArgs() { reason = ex });
+            }
         }
     }
 }
