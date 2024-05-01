@@ -1,5 +1,6 @@
 ﻿using APICallSystem.API.EventArguments;
 using APICallSystem.DataAdaptation;
+using System.Threading;
 
 namespace APICallSystem.API.APICalls
 {
@@ -11,6 +12,7 @@ namespace APICallSystem.API.APICalls
         private readonly IHttpReqBodyAdapter _bodyAdapter;
         private event Action<OnRequestSuccessEventArgs<T>>? OnSuccess;
         private event Action<OnRequestFailureEventArgs>? OnFailure;
+        private const int TIMEOUT_S = 10;
 
         public PostAPICall(string url, IHttpReqResponseAdapter responseAdapter, IHttpReqBodyAdapter bodyAdapter, T body,
             Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null)
@@ -32,6 +34,7 @@ namespace APICallSystem.API.APICalls
         private async Task ExecuteAsync()
         {
             using HttpClient client = new();
+            client.Timeout = TimeSpan.FromSeconds(TIMEOUT_S);
 
             StringContent content = new(_bodyAdapter.Convert(_body), System.Text.Encoding.UTF8, "application/json");
 
