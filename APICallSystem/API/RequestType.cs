@@ -1,4 +1,4 @@
-﻿namespace APICallSystem.API.APICalls
+﻿namespace APICallSystem.API
 {
     internal enum RequestType
     {

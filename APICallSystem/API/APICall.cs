@@ -1,7 +1,7 @@
 ﻿using APICallSystem.API.EventArguments;
 using APICallSystem.DataAdaptation;
 
-namespace APICallSystem.API.APICalls
+namespace APICallSystem.API
 {
     internal static class APICall<T> where T : class
     {

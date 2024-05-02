@@ -1,4 +1,4 @@
-﻿using APICallSystem.API.APICalls;
+﻿using APICallSystem.API;
 using APICallSystem.API.EventArguments;
 using APICallSystem.DataAdaptation;
 
