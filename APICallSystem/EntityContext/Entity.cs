@@ -16,27 +16,34 @@ namespace APICallSystem.EntityContext
 
         public void Get(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null)
         {
-            GetAPICall<T> getApiCall = new(_baseUrl + _endPoint + "/" + id, _responseAdapter, onSuccess, onFailure);
-            Prepare(getApiCall, onError);
+            ExecuteCall(RequestType.Get, _baseUrl + _endPoint + "/" + id, onSuccess, onFailure, onError);
         }
 
         public void Post(T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null) 
         {
-            PostAPICall<T> postApiCall = new(_baseUrl + _endPoint, _responseAdapter, _bodyAdapter, body, onSuccess, onFailure);
-            Prepare(postApiCall, onError);
+            ExecuteCall(RequestType.Post, _baseUrl + _endPoint, onSuccess, onFailure, onError, body);
         }
 
-        private void Prepare(IAPICall call, Action<OnReqExecutionFailureEventArgs>? onError = null)
+        public void Delete(Guid id, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null)
         {
-            Thread thread = new(() => Entity<T>.ExecuteCall(call, onError));
-            thread.Start();
+            ExecuteCall(RequestType.Delete, _baseUrl + _endPoint + "/" + id, onSuccess, onFailure, onError);
         }
 
-        private static void ExecuteCall(IAPICall call, Action<OnReqExecutionFailureEventArgs>? onError = null)
+        public void Put(Guid id, T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null)
+        {
+            ExecuteCall(RequestType.Put, _baseUrl + _endPoint + "/" + id, onSuccess, onFailure, onError, body);
+        }
+
+        public void Patch(Guid id, T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null)
+        {
+            ExecuteCall(RequestType.Patch, _baseUrl + _endPoint + "/" + id, onSuccess, onFailure, onError, body);
+        }
+        private void ExecuteCall(RequestType type, string url, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null, T? body = null)
         {
             try
             {
-                call.Execute();
+                Thread thread = new(() => APICall<T>.Execute(type, url, _responseAdapter, _bodyAdapter, body, onSuccess, onFailure));
+                thread.Start();
             }
             catch (Exception ex)
             {
