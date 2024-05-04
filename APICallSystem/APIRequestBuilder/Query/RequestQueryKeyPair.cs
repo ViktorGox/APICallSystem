@@ -5,10 +5,10 @@
     /// Instances with the same parameter name and setting will return true when compared.
     /// </summary>
     /// <param name="setting">The setting associated with the variable. Defaults to <see cref="RequestCompareSetting.None"/>.</param>
-    /// <param name="parameterName">Name of the variable/property of the represented model class.</param>
-    internal sealed class RequestQueryKeyPair(string parameterName, RequestCompareSetting setting = RequestCompareSetting.None)
+    /// <param name="parameter">Name of the variable/property of the represented model class.</param>
+    internal sealed class RequestQueryKeyPair(string parameter, RequestCompareSetting setting = RequestCompareSetting.None)
     {
-        public string ParameterName { get; private set; } = parameterName;
+        public string ParameterName { get; private set; } = parameter;
         public RequestCompareSetting Setting { get; private set; } = setting;
 
         public override int GetHashCode()
