@@ -63,10 +63,7 @@ namespace APICallSystem.APIRequestBuilder
                 queryPairs[newKeyPair] = [];
             }
 
-            if (queryPairs[newKeyPair].ContainsKey(key)) 
-            {
-                key = Guid.NewGuid().ToString();
-            }
+            key = Guid.NewGuid().ToString();
 
             queryPairs[newKeyPair][key] = [];
             queryPairs[newKeyPair][key].Add(value);
