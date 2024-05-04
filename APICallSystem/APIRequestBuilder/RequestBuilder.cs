@@ -2,11 +2,43 @@
 
 namespace APICallSystem.APIRequestBuilder
 {
+    // Explain possibilities, allows separation of data... why list inside dictionary inside dictionary?
     /// <summary>
-    /// Explain possibilities, allows separation of data... why list inside dictionary inside dictionary?
+    /// Creates a custom HTTP request based on provided data.
+    /// <br><strong>Queries:</strong></br>
+    /// <br>To add new parameter-value pair use <see cref="QueryAdd(string, string, ref string, RequestCompareSetting)"/> or <see cref="QueryAppend
+    /// (string, string, ref string, RequestCompareSetting)"/>.</br>
+    /// <br>When a new value is added, it is assigned to a <see cref="RequestQueryKeyPair"/> as well as another key, which will mentioned later 
+    /// as just key. This is done to allow for grouping of values. Example is shown later in the documentation.</br>
+    /// <br>To generate multiple pairs with the same parameter name, a different key must be used. 
+    /// This will result in .../api?name=1&amp;name=2&amp;name=3.</br>
+    /// <br>It is possible to add multiple values separated by a comma by using the <see cref="QueryAppend(string, string, ref string, 
+    /// RequestCompareSetting)"/> method. 
+    /// The result will be .../api?name=1,2&amp;name=3,4</br>
+    /// <br>It is also possible to remove parts with <see cref="QueryRemoveFromKey(string, string, ref string, RequestCompareSetting)"/>, <see 
+    /// cref="QueryRemoveKey(string, ref string, RequestCompareSetting)"/>, <see cref="QueryRemovePair(string, RequestCompareSetting)"/>.</br>
+    /// <br>The setting is mainly for the personal API, to not include it inside a query, use <see cref="RequestCompareSetting.None"/>. It is used to choose 
+    /// the way the values will be compared. The parameters are saved in combination with the setting as unique key. That allows for choosing multiple 
+    /// settings per one parameter. </br>
+    /// <br>For example: </br>
+    /// <br>Parameter: FirstName, Setting: Includes, Values: J, o, and in the same example another pair, Parameter: FirstName, Setting: NotIncludes,  
+    /// Values: b, k will result in a query which will look for names that include either J OR o, AND where it doesn't include b OR k.</br>
+    /// <br>Note the OR and AND. Values inside the same group will be compared with OR, values in different groups will be compared with AND. 
+    /// The query will look something like this: .../api?FirstName=J,o;Includes&amp;FirstName=b,k;NotIncludes.</br>
+    /// <br><strong>Body:</strong></br>
+    /// <br>...</br>
+    /// <br><strong>Headers:</strong></br>
+    /// <br>...</br>
+    /// <br><strong>Other modifiers:</strong></br>
+    /// <br>...</br>
+    /// <br><strong>Convert to an API call:</strong></br>
+    /// <br>...</br>
     /// </summary>
     internal class RequestBuilder
     {
+        /// <summary>
+        /// Holds all data related to queries. Queries might be separated 
+        /// </summary>
         private readonly Dictionary<RequestQueryKeyPair, Dictionary<string, List<string>>> queryPairs = [];
 
         /// <summary>
