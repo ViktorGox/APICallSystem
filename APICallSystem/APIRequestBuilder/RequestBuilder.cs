@@ -7,17 +7,15 @@ namespace APICallSystem.APIRequestBuilder
     /// </summary>
     internal class RequestBuilder
     {
-        // TODO: private after testing.
-        public readonly Dictionary<RequestQueryKeyPair, Dictionary<string, List<string>>> queryPairs = [];
+        private readonly Dictionary<RequestQueryKeyPair, Dictionary<string, List<string>>> queryPairs = [];
 
         /// <summary>
-        /// Appends value to existing parameter and value pair. Creates new pair if one does not exist.
+        /// Appends the value to an existing key-value pair within a parameter-setting pair. Creates new pairs if ones do not exist.
         /// </summary>
-        /// <param name="parameter">Model class variable/property name that will be used as key in the query.</param>
+        /// <param name="parameter">The name of a variable or property from a model class, which will be used as key in the query.</param>
         /// <param name="value">Value that will be assigned to the key.</param>
-        /// <param name="key">The key that will be assigned to the couple of values. Will be set to random Guid if empty or null</param>
-        /// <param name="setting">The way the values will be compared.</param>
-        /// <returns></returns>
+        /// <param name="key">The key that will be, or already is, associated to the group of values. Will be set to random Guid if empty or null.</param>
+        /// <param name="setting">The way the values will be compared. Only works for personal API. Defaults to <see cref="RequestCompareSetting.None"/>.</param>
         public RequestBuilder QueryAppend(string parameter, string value, ref string key, RequestCompareSetting setting = RequestCompareSetting.None)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(parameter, nameof(parameter));
@@ -46,14 +44,13 @@ namespace APICallSystem.APIRequestBuilder
         }
 
         /// <summary>
-        /// Creates new parameter and value pair, does not append value to existing pair. 
-        /// Key used is a randomly generated Guid which is assigned to the <paramref name="key"/>.
+        /// Creates a new key-value pair within a parameter-setting pair. Will create the parameter-setting pair, if one does not exist.
+        /// The <paramref name="key"/> will equal the new key from the key-value pair.
         /// </summary>
-        /// <param name="parameter">Model class variable/property name that will be used as key in the query.</param>
+        /// <param name="parameter">The name of a variable or property from a model class, which will be used as key in the query.</param>
         /// <param name="value">Value that will be assigned to the key.</param>
-        /// <param name="key"></param>
-        /// <param name="setting">The way the values will be compared.</param>
-        /// <returns></returns>
+        /// <param name="key">Value of this variable will equal the key that was used to create the new key-value pair.</param>
+        /// <param name="setting">The way the values will be compared. Only works for personal API. Defaults to <see cref="RequestCompareSetting.None"/>.</param>
         public RequestBuilder QueryAdd(string parameter, string value, ref string key, RequestCompareSetting setting = RequestCompareSetting.None)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(parameter, nameof(parameter));
@@ -78,21 +75,29 @@ namespace APICallSystem.APIRequestBuilder
         }
 
         /// <summary>
-        /// Allows changing value of the innerKey without breaking the chain.
+        /// Allows changing value of the key without breaking the chain.
         /// </summary>
-        /// <param name="innerKey">The key reference.</param>
+        /// <param name="key">The key reference.</param>
         /// <param name="newValue">New value that will be assigned to it.</param>
-        /// <returns></returns>
-        public RequestBuilder InnerKeyChange(ref string innerKey, string newValue)
+        public RequestBuilder InnerKeyChange(ref string key, string newValue)
         {
-            innerKey = newValue;
+            key = newValue;
             return this;
         }
 
-        public RequestBuilder QueryRemove(string parameterName, string value, ref string key, RequestCompareSetting setting = RequestCompareSetting.None)
+        /// <summary>
+        /// Removes specified value from an existing key-value pair within a parameter-setting pair. Requires the correct key from the time of assigning, 
+        /// can be found inside the ref value of the <see cref="QueryAdd(string, string, ref string, RequestCompareSetting)"/> 
+        /// or <see cref="QueryAppend(string, string, ref string, RequestCompareSetting)"/>. Deletes the parent pair if parent is left empty.
+        /// </summary>
+        /// <param name="parameter">The name of a variable or property from a model class, which was given when creating the parameter-setting pair.</param>
+        /// <param name="value">The value to be removed.</param>
+        /// <param name="key">The associated key.</param>
+        /// <param name="setting">The setting which was given when creating the parameter-setting pair.</param>
+        public RequestBuilder QueryRemoveFromKey(string parameter, string value, ref string key, RequestCompareSetting setting = RequestCompareSetting.None)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(parameterName, nameof(parameterName));
-            RequestQueryKeyPair newKeyPair = new(parameterName, setting);
+            ArgumentException.ThrowIfNullOrWhiteSpace(parameter, nameof(parameter));
+            RequestQueryKeyPair newKeyPair = new(parameter, setting);
 
             if (string.IsNullOrWhiteSpace(key)) return this;
             if (!queryPairs.ContainsKey(newKeyPair)) return this;
@@ -107,11 +112,50 @@ namespace APICallSystem.APIRequestBuilder
             return this;
         }
 
-        public RequestBuilder QueryRemovePair(string parameter)
+        /// <summary>
+        /// Removes all values from an existing key-value pair including itself within a parameter-setting pair. 
+        /// Requires the correct key from the time of assigning, can be found inside the ref value of the 
+        /// <see cref="QueryAdd(string, string, ref string, RequestCompareSetting)"/> 
+        /// or <see cref="QueryAppend(string, string, ref string, RequestCompareSetting)"/>.
+        /// </summary>
+        /// <param name="parameter">The name of a variable or property from a model class, which was given when creating the parameter-setting pair.</param>
+        /// <param name="key">The associated key.</param>
+        /// <param name="setting">The setting which was given when creating the parameter-setting pair.</param>
+        public RequestBuilder QueryRemoveKey(string parameter, ref string key, RequestCompareSetting setting = RequestCompareSetting.None)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(parameter, nameof(parameter));
+            RequestQueryKeyPair newKeyPair = new(parameter, setting);
+
+            if (string.IsNullOrWhiteSpace(key)) return this;
+            if (!queryPairs.ContainsKey(newKeyPair)) return this;
+            if (queryPairs[newKeyPair][key] == null) return this;
+
+            queryPairs[newKeyPair].Remove(key);
+
             return this;
         }
 
+
+        /// <summary>
+        /// Removes full parameter-setting pair and all data within.
+        /// </summary>
+        /// <param name="parameter">The name of a variable or property from a model class, which was given when creating the parameter-setting pair.</param>
+        /// <param name="setting">The setting which was given when creating the parameter-setting pair.</param>
+        public RequestBuilder QueryRemovePair(string parameter, RequestCompareSetting setting = RequestCompareSetting.None)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(parameter, nameof(parameter));
+            RequestQueryKeyPair newKeyPair = new(parameter, setting);
+
+            if (!queryPairs.ContainsKey(newKeyPair)) return this;
+            
+            queryPairs.Remove(newKeyPair);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Dummy method used to print the contents. Should be deleted. 
+        /// </summary>
         public void Print()
         {
             foreach (var outerPair in queryPairs)
