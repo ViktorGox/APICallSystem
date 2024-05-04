@@ -1,8 +1,6 @@
-﻿using APICallSystem.API;
-using APICallSystem.API.EventArguments;
-using APICallSystem.BackEnd;
-using APICallSystem.DataAdaptation;
-using APICallSystem.EntityContext;
+﻿using APICallSystem.API.EventArguments;
+using APICallSystem.APIRequestBuilder;
+using APICallSystem.APIRequestBuilder.Query;
 using CustomConsole;
 
 namespace MyApp
@@ -11,18 +9,36 @@ namespace MyApp
     {
         static void Main()
         {
-            JSONHttpReqResponseAdapter jsonResponseAdapter = new();
-            JSONHttpReqBodyAdapter jsonBodyAdapter = new();
+            RequestBuilder builder = new RequestBuilder();
 
-            Context context = new(UrlFactory.Create(true, "localhost", 7225, "api"), jsonResponseAdapter, jsonBodyAdapter);
+            string innerKey = "CustomKey";
+            builder.QueryAdd("name", "MyValue", ref innerKey, RequestCompareSetting.Equals)
+                .InnerKeyChange(ref innerKey, "")
+                .QueryAppend("name", "ValueOne1", ref innerKey, RequestCompareSetting.Equals)
+                .QueryAppend("name", "ValueOne2", ref innerKey, RequestCompareSetting.Equals)
+                .QueryAppend("name", "ValueOne3", ref innerKey, RequestCompareSetting.Equals)
+                .QueryAdd("name", "ValueOne4", ref innerKey, RequestCompareSetting.Equals)
+                .QueryAdd("name1", "ValueOne5", ref innerKey, RequestCompareSetting.Equals)
+                .QueryAdd("name1", "ValueOne6", ref innerKey, RequestCompareSetting.NotEquals);
 
-            context.AddEntity(typeof(Message), "Module"); 
-            context.AddEntity(typeof(User), "Test");
+            builder.Print();
+            innerKey = "CustomKey";
+            builder.QueryRemove("name", "MyValue", ref innerKey, RequestCompareSetting.Equals);
+            CConsole.WriteLine();
+            builder.Print();
 
-            User dummyUser = new("112", "Obvious name", "@av");
+            //JSONHttpReqResponseAdapter jsonResponseAdapter = new();
+            //JSONHttpReqBodyAdapter jsonBodyAdapter = new();
 
-            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure, OnError);
-            context.Get<User>()?.Post(dummyUser, OnSuccess, OnFailure);
+            //Context context = new(UrlFactory.Create(true, "localhost", 7225, "api"), jsonResponseAdapter, jsonBodyAdapter);
+
+            //context.AddEntity(typeof(Message), "Module");
+            //context.AddEntity(typeof(User), "Test");
+
+            //User dummyUser = new("112", "Obvious name", "@av");
+
+            //context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure, OnError);
+            //context.Get<User>()?.Post(dummyUser, OnSuccess, OnFailure);
         }
 
         public static void OnSuccess<T>(OnRequestSuccessEventArgs<T> onRequestSuccessEventArgs)
