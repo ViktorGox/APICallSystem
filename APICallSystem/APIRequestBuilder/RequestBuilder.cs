@@ -34,12 +34,20 @@ namespace APICallSystem.APIRequestBuilder
     /// <br><strong>Convert to an API call:</strong></br>
     /// <br>...</br>
     /// </summary>
-    internal class RequestBuilder
+    public class RequestBuilder
     {
-        /// <summary>
-        /// Holds all data related to queries. Queries might be separated 
-        /// </summary>
-        private readonly Dictionary<RequestQueryKeyPair, Dictionary<string, List<string>>> queryPairs = [];
+        private readonly Request _request;
+
+        public RequestBuilder()
+        {
+            _request = new Request();
+        }
+
+        public RequestBuilder(Request request)
+        {
+            _request = request;
+        }
+
 
         /// <summary>
         /// Appends the value to an existing key-value pair within a parameter-setting pair. Creates new pairs if ones do not exist.
@@ -55,9 +63,9 @@ namespace APICallSystem.APIRequestBuilder
 
             RequestQueryKeyPair newKeyPair = new(parameter, setting);
 
-            if (!queryPairs.ContainsKey(newKeyPair))
+            if (!_request.QueryPairs.ContainsKey(newKeyPair))
             {
-                queryPairs[newKeyPair] = [];
+                _request.QueryPairs[newKeyPair] = [];
             }
 
             if (string.IsNullOrWhiteSpace(key))
@@ -65,12 +73,12 @@ namespace APICallSystem.APIRequestBuilder
                 key = Guid.NewGuid().ToString();
             }
 
-            if (!queryPairs[newKeyPair].ContainsKey(key))
+            if (!_request.QueryPairs[newKeyPair].ContainsKey(key))
             {
-                queryPairs[newKeyPair].Add(key, []);
+                _request.QueryPairs[newKeyPair].Add(key, []);
             }
 
-            queryPairs[newKeyPair][key].Add(value);
+            _request.QueryPairs[newKeyPair][key].Add(value);
 
             return this;
         }
@@ -90,15 +98,15 @@ namespace APICallSystem.APIRequestBuilder
 
             RequestQueryKeyPair newKeyPair = new(parameter, setting);
 
-            if (!queryPairs.ContainsKey(newKeyPair))
+            if (!_request.QueryPairs.ContainsKey(newKeyPair))
             {
-                queryPairs[newKeyPair] = [];
+                _request.QueryPairs[newKeyPair] = [];
             }
 
             key = Guid.NewGuid().ToString();
 
-            queryPairs[newKeyPair][key] = [];
-            queryPairs[newKeyPair][key].Add(value);
+            _request.QueryPairs[newKeyPair][key] = [];
+            _request.QueryPairs[newKeyPair][key].Add(value);
 
             return this;
         }
@@ -108,9 +116,20 @@ namespace APICallSystem.APIRequestBuilder
         /// </summary>
         /// <param name="key">The key reference.</param>
         /// <param name="newValue">New value that will be assigned to it.</param>
-        public RequestBuilder InnerKeyChange(ref string key, string newValue)
+        public RequestBuilder KeyChange(ref string key, string newValue)
         {
             key = newValue;
+            return this;
+        }
+
+        /// <summary>
+        /// Allows saving a previously used key without breaking the chain.
+        /// </summary>
+        /// <param name="key">The that was used in the last method.</param>
+        /// <param name="copy">A string which will be overwritten by a copy of the key.</param>
+        public RequestBuilder KeySave(ref string key, ref string copy)
+        {
+            copy = key;
             return this;
         }
 
@@ -129,14 +148,14 @@ namespace APICallSystem.APIRequestBuilder
             RequestQueryKeyPair newKeyPair = new(parameter, setting);
 
             if (string.IsNullOrWhiteSpace(key)) return this;
-            if (!queryPairs.ContainsKey(newKeyPair)) return this;
-            if (queryPairs[newKeyPair][key] == null) return this;
+            if (!_request.QueryPairs.ContainsKey(newKeyPair)) return this;
+            if (_request.QueryPairs[newKeyPair][key] == null) return this;
 
-            queryPairs[newKeyPair][key].Remove(value);
-            if(queryPairs[newKeyPair][key].Count == 0)
+            _request.QueryPairs[newKeyPair][key].Remove(value);
+            if (_request.QueryPairs[newKeyPair][key].Count == 0)
             {
-                queryPairs[newKeyPair].Remove(key);
-            } 
+                _request.QueryPairs[newKeyPair].Remove(key);
+            }
 
             return this;
         }
@@ -156,10 +175,10 @@ namespace APICallSystem.APIRequestBuilder
             RequestQueryKeyPair newKeyPair = new(parameter, setting);
 
             if (string.IsNullOrWhiteSpace(key)) return this;
-            if (!queryPairs.ContainsKey(newKeyPair)) return this;
-            if (queryPairs[newKeyPair][key] == null) return this;
+            if (!_request.QueryPairs.ContainsKey(newKeyPair)) return this;
+            if (_request.QueryPairs[newKeyPair][key] == null) return this;
 
-            queryPairs[newKeyPair].Remove(key);
+            _request.QueryPairs[newKeyPair].Remove(key);
 
             return this;
         }
@@ -175,11 +194,16 @@ namespace APICallSystem.APIRequestBuilder
             ArgumentException.ThrowIfNullOrWhiteSpace(parameter, nameof(parameter));
             RequestQueryKeyPair newKeyPair = new(parameter, setting);
 
-            if (!queryPairs.ContainsKey(newKeyPair)) return this;
-            
-            queryPairs.Remove(newKeyPair);
+            if (!_request.QueryPairs.ContainsKey(newKeyPair)) return this;
+
+            _request.QueryPairs.Remove(newKeyPair);
 
             return this;
+        }
+
+        public Request GetRequest()
+        {
+            return _request;
         }
 
         /// <summary>
@@ -187,7 +211,7 @@ namespace APICallSystem.APIRequestBuilder
         /// </summary>
         public void Print()
         {
-            foreach (var outerPair in queryPairs)
+            foreach (var outerPair in _request.QueryPairs)
             {
                 Console.WriteLine($"Key: {outerPair.Key.ParameterName}, {outerPair.Key.Setting}");
 
