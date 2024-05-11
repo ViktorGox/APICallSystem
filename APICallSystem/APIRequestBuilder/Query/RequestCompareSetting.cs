@@ -1,6 +1,6 @@
 ﻿namespace APICallSystem.APIRequestBuilder.Query
 {
-    internal enum RequestCompareSetting
+    public enum RequestCompareSetting
     {
         None,
 

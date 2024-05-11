@@ -6,7 +6,7 @@
     /// </summary>
     /// <param name="setting">The setting associated with the variable. Defaults to <see cref="RequestCompareSetting.None"/>.</param>
     /// <param name="parameter">Name of the variable/property of the represented model class.</param>
-    internal sealed class RequestQueryKeyPair(string parameter, RequestCompareSetting setting = RequestCompareSetting.None)
+    public sealed class RequestQueryKeyPair(string parameter, RequestCompareSetting setting = RequestCompareSetting.None)
     {
         public string ParameterName { get; private set; } = parameter;
         public RequestCompareSetting Setting { get; private set; } = setting;
@@ -21,6 +21,11 @@
             if (obj == null || GetType() != obj.GetType()) return false;
             RequestQueryKeyPair other = (RequestQueryKeyPair)obj;
             return ParameterName == other.ParameterName && Setting == other.Setting;
+        }
+
+        public override string ToString()
+        {
+            return ParameterName + "-" + Setting.ToString();
         }
     }
 }
