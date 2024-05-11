@@ -2,6 +2,7 @@
 using APICallSystem.APIRequestBuilder;
 using APICallSystem.APIRequestBuilder.Query;
 using CustomConsole;
+using System.Text;
 
 namespace MyApp
 {
@@ -9,23 +10,29 @@ namespace MyApp
     {
         static void Main()
         {
-            RequestBuilder builder = new RequestBuilder();
+            RequestBuilder builder = new();
 
             string innerKey = "CustomKey";
-            builder.QueryAdd("name", "MyValue", ref innerKey, RequestCompareSetting.Equals)
-                .InnerKeyChange(ref innerKey, "")
-                .QueryAppend("name", "ValueOne1", ref innerKey, RequestCompareSetting.Equals)
-                .QueryAppend("name", "ValueOne2", ref innerKey, RequestCompareSetting.Equals)
-                .QueryAppend("name", "ValueOne3", ref innerKey, RequestCompareSetting.Equals)
-                .QueryAdd("name", "ValueOne4", ref innerKey, RequestCompareSetting.Equals)
-                .QueryAdd("name1", "ValueOne5", ref innerKey, RequestCompareSetting.Equals)
-                .QueryAdd("name1", "ValueOne6", ref innerKey, RequestCompareSetting.NotEquals);
+            builder.QueryAppend("label", "MyValue", ref innerKey, RequestCompareSetting.IncludesAny)
+                .KeyChange(ref innerKey, "SecondCustomKey")
+                .QueryAppend("label", "ValueOne1", ref innerKey, RequestCompareSetting.IncludesAnyEndCS)
+                .QueryAppend("label", "ValueOne2", ref innerKey, RequestCompareSetting.IncludesAnyEndCS)
+                .QueryAppend("label", "ValueOne3", ref innerKey, RequestCompareSetting.IncludesAnyEndCS)
+                .QueryAdd("description", "ValueOne4", ref innerKey, RequestCompareSetting.Equals)
+                .QueryAdd("description", "ValueOne5", ref innerKey, RequestCompareSetting.Equals)
+                .QueryAdd("description", "ValueOne6", ref innerKey, RequestCompareSetting.NotEquals);
+
+            CConsole.WriteLine(builder.GetRequest().GetQueryAsString());
 
             builder.Print();
             innerKey = "CustomKey";
-            builder.QueryRemove("name", "MyValue", ref innerKey, RequestCompareSetting.Equals);
+            builder.QueryRemoveFromKey("label", "MyValue", ref innerKey, RequestCompareSetting.IncludesAny);
+            innerKey = "SecondCustomKey";
+            builder.QueryRemoveKey("label", ref innerKey, RequestCompareSetting.IncludesAnyEndCS);
+            builder.QueryRemovePair("label", RequestCompareSetting.IncludesAnyEndCS);
             CConsole.WriteLine();
             builder.Print();
+            CConsole.WriteLine(builder.GetRequest().GetQueryAsString());
 
             //JSONHttpReqResponseAdapter jsonResponseAdapter = new();
             //JSONHttpReqBodyAdapter jsonBodyAdapter = new();
