@@ -6,7 +6,7 @@ namespace APICallSystem.APIRequestBuilder
     public class Request
     {
         /// <summary>
-        /// Holds all data related to queries. Queries might be separated 
+        /// Holds all data related to queries.
         /// </summary>
         public Dictionary<RequestQueryKeyPair, Dictionary<string, List<string>>> QueryPairs { get; private set; } = [];
 
