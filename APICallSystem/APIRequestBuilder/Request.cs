@@ -15,21 +15,25 @@ namespace APICallSystem.APIRequestBuilder
             StringBuilder sb = new();
             for (int k = 0; k < QueryPairs.Count; k++)
             {
-                var parameterSettingPair = QueryPairs.ElementAt(k);
-                var parameterSettingPairCount = parameterSettingPair.Value.Count;
+                KeyValuePair<RequestQueryKeyPair, Dictionary<string, List<string>>> parameterSettingPair = QueryPairs.ElementAt(k);
+                int parameterSettingPairCount = parameterSettingPair.Value.Count;
+
                 for (int j = 0; j < parameterSettingPairCount; j++)
                 {
-                    var innerPair = parameterSettingPair.Value.ElementAt(j);
-                    var innerPairCount = innerPair.Value.Count;
+                    KeyValuePair<string, List<string>> innerPair = parameterSettingPair.Value.ElementAt(j);
+                    int innerPairCount = innerPair.Value.Count;
 
                     sb.Append(parameterSettingPair.Key.ParameterName).Append('=');
+
                     for (int i = 0; i < innerPairCount; i++)
                     {
                         sb.Append(innerPair.Value[i]);
                         if (i < innerPairCount - 1) sb.Append(',');
                     }
-                    if (parameterSettingPair.Key.Setting != RequestCompareSetting.None) sb.Append(';').Append(parameterSettingPair.Key.Setting.ToString());
-
+                    if (parameterSettingPair.Key.Setting != RequestCompareSetting.None)
+                    {
+                        sb.Append(';').Append(parameterSettingPair.Key.Setting.ToString());
+                    }
                     if (k != QueryPairs.Count - 1 || j != parameterSettingPairCount - 1) sb.Append('&');
                 }
             }
