@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICallSystem", "APICallSystem\APICallSystem.csproj", "{C634BC38-D480-4F7D-BBFE-A3A066C74035}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APICallSystem", "APICallSystem\APICallSystem.csproj", "{C634BC38-D480-4F7D-BBFE-A3A066C74035}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APICallSystemTests", "APICallSystemTests\APICallSystemTests.csproj", "{4E3400C7-0CBA-47E9-B1D2-6AE26965ED83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{C634BC38-D480-4F7D-BBFE-A3A066C74035}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C634BC38-D480-4F7D-BBFE-A3A066C74035}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C634BC38-D480-4F7D-BBFE-A3A066C74035}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E3400C7-0CBA-47E9-B1D2-6AE26965ED83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E3400C7-0CBA-47E9-B1D2-6AE26965ED83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E3400C7-0CBA-47E9-B1D2-6AE26965ED83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E3400C7-0CBA-47E9-B1D2-6AE26965ED83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
