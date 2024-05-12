@@ -1,4 +1,5 @@
 ﻿using APICallSystem.APIRequestBuilder.Query;
+using APICallSystem.Outdated.DataAdaptation;
 using System.Text;
 
 namespace APICallSystem.APIRequestBuilder
@@ -9,6 +10,7 @@ namespace APICallSystem.APIRequestBuilder
         /// Holds all data related to queries.
         /// </summary>
         public Dictionary<RequestQueryKeyPair, Dictionary<string, List<string>>> QueryPairs { get; private set; } = [];
+        public object? body { get; set; }
 
         public string GetQueryAsString()
         {
@@ -38,6 +40,13 @@ namespace APICallSystem.APIRequestBuilder
                 }
             }
             return sb.ToString();
+        }
+
+        public string GetBodyAsString(IHttpReqBodyAdapter bodyAdapter)
+        {
+            ArgumentNullException.ThrowIfNull(bodyAdapter);
+            if (body == null) return "";
+            return bodyAdapter.Convert(body);
         }
     }
 }
