@@ -1,7 +1,7 @@
-﻿using APICallSystem.API.EventArguments;
-using APICallSystem.DataAdaptation;
+﻿using APICallSystem.Outdated.API.EventArguments;
+using APICallSystem.Outdated.DataAdaptation;
 
-namespace APICallSystem.API.APICalls
+namespace APICallSystem.Outdated.API.APICalls
 {
     internal static class APICall<T> where T : class
     {

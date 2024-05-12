@@ -1,7 +1,7 @@
-﻿using APICallSystem.DataAdaptation;
+﻿using APICallSystem.Outdated.DataAdaptation;
 using System.Reflection;
 
-namespace APICallSystem.EntityContext
+namespace APICallSystem.Outdated.EntityContext
 {
     /// <summary>
     /// Represents list of entities which can be accessed through the API, each entity is represented by <see cref="Entity{T}"/> instance containing specific end points.

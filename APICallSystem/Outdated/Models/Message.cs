@@ -1,4 +1,4 @@
-﻿namespace APICallSystem.BackEnd
+﻿namespace APICallSystem.Outdated.Models
 {
     /// <summary>
     /// Dummy class.

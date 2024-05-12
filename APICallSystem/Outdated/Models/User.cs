@@ -1,4 +1,4 @@
-﻿namespace APICallSystem.BackEnd
+﻿namespace APICallSystem.Outdated.Models
 {
     /// <summary>
     /// Dummy class.
@@ -18,7 +18,7 @@
 
         public override string ToString()
         {
-            return Id + " - " + Name + " - " + Email; 
+            return Id + " - " + Name + " - " + Email;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace APICallSystem.DataAdaptation
+﻿namespace APICallSystem.Outdated.DataAdaptation
 {
     public interface IHttpReqBodyAdapter
     {

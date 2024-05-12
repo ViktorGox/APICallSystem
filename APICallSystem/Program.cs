@@ -1,8 +1,9 @@
-﻿using APICallSystem.API.EventArguments;
-using APICallSystem.APIRequestBuilder;
-using APICallSystem.APIRequestBuilder.Query;
+﻿using APICallSystem.Outdated.API;
+using APICallSystem.Outdated.API.EventArguments;
+using APICallSystem.Outdated.DataAdaptation;
+using APICallSystem.Outdated.EntityContext;
+using APICallSystem.Outdated.Models;
 using CustomConsole;
-using System.Text;
 
 namespace MyApp
 {
@@ -10,42 +11,18 @@ namespace MyApp
     {
         static void Main()
         {
-            RequestBuilder builder = new();
+            JSONHttpReqResponseAdapter jsonResponseAdapter = new();
+            JSONHttpReqBodyAdapter jsonBodyAdapter = new();
 
-            string innerKey = "CustomKey";
-            builder.QueryAppend("label", "MyValue", ref innerKey, RequestCompareSetting.IncludesAny)
-                .KeyChange(ref innerKey, "SecondCustomKey")
-                .QueryAppend("label", "ValueOne1", ref innerKey, RequestCompareSetting.IncludesAnyEndCS)
-                .QueryAppend("label", "ValueOne2", ref innerKey, RequestCompareSetting.IncludesAnyEndCS)
-                .QueryAppend("label", "ValueOne3", ref innerKey, RequestCompareSetting.IncludesAnyEndCS)
-                .QueryAdd("description", "ValueOne4", ref innerKey, RequestCompareSetting.Equals)
-                .QueryAdd("description", "ValueOne5", ref innerKey, RequestCompareSetting.Equals)
-                .QueryAdd("description", "ValueOne6", ref innerKey, RequestCompareSetting.NotEquals);
+            Context context = new(UrlFactory.Create(true, "localhost", 7225, "api"), jsonResponseAdapter, jsonBodyAdapter);
 
-            CConsole.WriteLine(builder.GetRequest().GetQueryAsString());
+            context.AddEntity(typeof(Message), "Module"); 
+            context.AddEntity(typeof(User), "Test");
 
-            builder.Print();
-            innerKey = "CustomKey";
-            builder.QueryRemoveFromKey("label", "MyValue", ref innerKey, RequestCompareSetting.IncludesAny);
-            innerKey = "SecondCustomKey";
-            builder.QueryRemoveKey("label", ref innerKey, RequestCompareSetting.IncludesAnyEndCS);
-            builder.QueryRemovePair("label", RequestCompareSetting.IncludesAnyEndCS);
-            CConsole.WriteLine();
-            builder.Print();
-            CConsole.WriteLine(builder.GetRequest().GetQueryAsString());
+            User dummyUser = new("112", "Obvious name", "@av");
 
-            //JSONHttpReqResponseAdapter jsonResponseAdapter = new();
-            //JSONHttpReqBodyAdapter jsonBodyAdapter = new();
-
-            //Context context = new(UrlFactory.Create(true, "localhost", 7225, "api"), jsonResponseAdapter, jsonBodyAdapter);
-
-            //context.AddEntity(typeof(Message), "Module");
-            //context.AddEntity(typeof(User), "Test");
-
-            //User dummyUser = new("112", "Obvious name", "@av");
-
-            //context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure, OnError);
-            //context.Get<User>()?.Post(dummyUser, OnSuccess, OnFailure);
+            context.Get<User>()?.Get(new Guid("62b89e37-0a89-4233-5db9-08dc4dcaf70c"), OnSuccess, OnFailure, OnError);
+            context.Get<User>()?.Post(dummyUser, OnSuccess, OnFailure);
         }
 
         public static void OnSuccess<T>(OnRequestSuccessEventArgs<T> onRequestSuccessEventArgs)

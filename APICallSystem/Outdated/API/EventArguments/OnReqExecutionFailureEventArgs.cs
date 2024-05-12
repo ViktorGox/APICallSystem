@@ -1,4 +1,4 @@
-﻿namespace APICallSystem.API.EventArguments
+﻿namespace APICallSystem.Outdated.API.EventArguments
 {
     internal class OnReqExecutionFailureEventArgs : EventArgs
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace APICallSystem.API
+namespace APICallSystem.Outdated.API
 {
     internal static class UrlFactory
     {

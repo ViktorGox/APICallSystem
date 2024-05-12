@@ -1,8 +1,8 @@
-﻿using APICallSystem.API.APICalls;
-using APICallSystem.API.EventArguments;
-using APICallSystem.DataAdaptation;
+﻿using APICallSystem.Outdated.API.APICalls;
+using APICallSystem.Outdated.API.EventArguments;
+using APICallSystem.Outdated.DataAdaptation;
 
-namespace APICallSystem.EntityContext
+namespace APICallSystem.Outdated.EntityContext
 {
     /// <summary>
     /// Represents entity present in the back end, allows for calling available end points.
@@ -19,7 +19,7 @@ namespace APICallSystem.EntityContext
             ExecuteCall(RequestType.Get, _baseUrl + _endPoint + "/" + id, onSuccess, onFailure, onError);
         }
 
-        public void Post(T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null) 
+        public void Post(T body, Action<OnRequestSuccessEventArgs<T>>? onSuccess = null, Action<OnRequestFailureEventArgs>? onFailure = null, Action<OnReqExecutionFailureEventArgs>? onError = null)
         {
             ExecuteCall(RequestType.Post, _baseUrl + _endPoint, onSuccess, onFailure, onError, body);
         }
