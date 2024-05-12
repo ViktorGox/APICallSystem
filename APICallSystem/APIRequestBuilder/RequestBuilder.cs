@@ -201,6 +201,13 @@ namespace APICallSystem.APIRequestBuilder
             return this;
         }
 
+
+        public RequestBuilder BodyAdd(object body)
+        {
+            _request.body = body;
+            return this;
+        }
+
         public Request GetRequest()
         {
             return _request;
