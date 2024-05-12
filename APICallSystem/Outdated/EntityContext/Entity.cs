@@ -1,6 +1,6 @@
-﻿using APICallSystem.Outdated.API.APICalls;
+﻿using APICallSystem.DataAdaptation;
+using APICallSystem.Outdated.API.APICalls;
 using APICallSystem.Outdated.API.EventArguments;
-using APICallSystem.Outdated.DataAdaptation;
 
 namespace APICallSystem.Outdated.EntityContext
 {

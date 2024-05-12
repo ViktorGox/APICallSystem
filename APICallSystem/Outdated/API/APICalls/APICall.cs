@@ -1,5 +1,5 @@
-﻿using APICallSystem.Outdated.API.EventArguments;
-using APICallSystem.Outdated.DataAdaptation;
+﻿using APICallSystem.DataAdaptation;
+using APICallSystem.Outdated.API.EventArguments;
 
 namespace APICallSystem.Outdated.API.APICalls
 {

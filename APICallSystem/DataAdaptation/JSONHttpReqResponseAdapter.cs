@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace APICallSystem.Outdated.DataAdaptation
+namespace APICallSystem.DataAdaptation
 {
     internal class JSONHttpReqResponseAdapter : IHttpReqResponseAdapter
     {

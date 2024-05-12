@@ -1,5 +1,5 @@
 ﻿using APICallSystem.APIRequestBuilder.Query;
-using APICallSystem.Outdated.DataAdaptation;
+using APICallSystem.DataAdaptation;
 using System.Text;
 
 namespace APICallSystem.APIRequestBuilder

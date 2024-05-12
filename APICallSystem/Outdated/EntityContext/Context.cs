@@ -1,4 +1,4 @@
-﻿using APICallSystem.Outdated.DataAdaptation;
+﻿using APICallSystem.DataAdaptation;
 using System.Reflection;
 
 namespace APICallSystem.Outdated.EntityContext
